@@ -1,0 +1,12 @@
+.next/
+node_modules/
+.idea/
+.tmp/
+tmp/
+public/uploads/
+public/exports/
+public/hls/
+data/transcripts/
+.env*.local
+.DS_Store
+Thumbs.db

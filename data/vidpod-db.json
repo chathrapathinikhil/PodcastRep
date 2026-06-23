@@ -1,0 +1,68 @@
+{
+  "markers": [
+    {
+      "type": "static",
+      "adIds": [
+        "62bbb454-3827-4916-8c77-579c2723619d"
+      ],
+      "label": "Static ad",
+      "time": 14.460838263045392,
+      "id": "88d22805-cb34-4343-8b13-a6e4490b977a"
+    },
+    {
+      "time": 2682.1251050965257,
+      "type": "auto",
+      "adIds": [
+        "62bbb454-3827-4916-8c77-579c2723619d",
+        "6e0a3536-6789-4c08-967b-c77a25d6bb53",
+        "26c6f530-8f71-4241-b91c-a1176fe92896",
+        "8db9341d-b1a8-4564-a931-64a37cd8bee9",
+        "b052fbc5-c9b0-41ed-bfd8-b10aec1a3ce5"
+      ],
+      "label": "Auto ad rotation",
+      "id": "50c7e911-a1d8-44d3-9d43-e343da42e686"
+    },
+    {
+      "type": "ab",
+      "adIds": [
+        "26c6f530-8f71-4241-b91c-a1176fe92896",
+        "8db9341d-b1a8-4564-a931-64a37cd8bee9"
+      ],
+      "label": "A/B test",
+      "time": 5111.85892530514,
+      "id": "16f7a682-4807-4cf6-ac3c-79cc31068992"
+    }
+  ],
+  "ads": [
+    {
+      "name": "Jersey mikes",
+      "url": "/uploads/jersey-mikes-1782109291241-382633f1.mp4",
+      "duration": 30,
+      "id": "62bbb454-3827-4916-8c77-579c2723619d"
+    },
+    {
+      "name": "Pringles",
+      "url": "/uploads/pringles-1782109299657-ce2414bc.mp4",
+      "duration": 30,
+      "id": "6e0a3536-6789-4c08-967b-c77a25d6bb53"
+    },
+    {
+      "name": "Coca Cola",
+      "url": "/uploads/coca-cola-1782109306231-90709ff4.mp4",
+      "duration": 30,
+      "id": "26c6f530-8f71-4241-b91c-a1176fe92896"
+    },
+    {
+      "name": "Iphone",
+      "url": "/uploads/iphone-1782109312500-31f3db67.mp4",
+      "duration": 118,
+      "id": "8db9341d-b1a8-4564-a931-64a37cd8bee9"
+    },
+    {
+      "name": "Umault",
+      "url": "/uploads/umault-1782109319620-360a22d3.mp4",
+      "duration": 17,
+      "id": "b052fbc5-c9b0-41ed-bfd8-b10aec1a3ce5"
+    }
+  ]
+}
