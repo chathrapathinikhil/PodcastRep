@@ -1,56 +1,156 @@
-# Vidpod - Dynamic Ad Placement
+# Vidpod
 
-A full-stack Next.js app for placing dynamic ads on a podcast/video episode.
+Vidpod is a Next.js demo app for editing dynamic ad breaks in a podcast or video episode. It is built around the workflow a podcaster would actually use: upload an episode, upload a few ad videos, place markers on the timeline, choose how each marker should behave, and preview how the listener experience will feel.
 
-## Stack
-- Next.js 14 App Router, TypeScript, Tailwind CSS
-- Zustand for client state, timeline sync, and undo/redo history
-- API routes for marker/ad CRUD with local JSON persistence
+The app is intentionally local and simple. It uses a JSON file as its small backend database, browser-uploaded media files, and API routes for the basic CRUD operations.
 
-## Getting Started
+## What Is Implemented
 
-```bash
-npm install
-npm run dev
+- Upload an episode video and play it in the editor.
+- Upload ad videos into a local ad library.
+- Create ad markers on the episode timeline.
+- Edit and delete existing markers.
+- Drag markers directly on the timeline.
+- Undo and redo marker create, update, delete, and drag operations.
+- Click the timeline to seek.
+- Drag the red playhead to scrub.
+- Zoom the timeline and keep markers, playhead, waveform, and ruler aligned.
+- Press Space anywhere on the page to play or pause.
+- Use Static, Auto, and A/B marker types.
+- Preview a single ad manually from a marker row.
+- Open A/B result details from A/B markers.
+- Store markers and ads through API routes backed by `data/vidpod-db.json`.
+
+## Ad Marker Types
+
+**Static**
+
+Always plays the exact ad selected for that marker.
+
+**Auto**
+
+Randomly chooses one of the selected ads when the marker plays.
+
+**A/B**
+
+Rotates through the selected ads using simple round-robin logic. The app stores basic stats on the marker itself:
+
+- impressions
+- completions
+- skips
+- clicks
+
+The current winner logic is intentionally simple: the leading variant is the ad with the highest completion rate.
+
+```text
+completion rate = completions / impressions
 ```
 
-Open the local URL printed by Next.js, usually `http://localhost:3000`.
+## Editor Mode And Preview Mode
 
-## Implemented
+The app has two different modes because editing and watching are different workflows.
 
-- Main episode player uses a local HTML5 video source uploaded in the browser.
-- Upload a local episode video and edit ad markers against that source for the current browser session.
-- Upload local video ads into the ad library.
-- The app starts with an empty ad library and no default ad markers.
-- Static, Auto, and A/B marker types.
-- A/B selection records local impression/completion stats and prefers the best completion rate after initial sampling.
-- Marker CRUD through API routes.
-- API payload validation for marker and ad create/update requests.
-- Undo/redo for add, edit, delete, and timeline drag operations.
-- Draggable timeline markers with server sync on mouseup.
-- Timeline click-to-seek, double-click-to-add, and Ctrl/Cmd-scroll zoom.
-- Native video controls, draggable timeline playhead, skip ad, and page-wide Space play/pause.
-- A/B results modal for selecting and saving a winning ad variant.
-- Sidebar hovers and non-critical navigation placeholders.
+**Editor mode**
 
-## API
+Editor mode is for placing and managing ad markers. Scrubbing across a marker does not interrupt the editor or auto-play an ad. Markers behave like editable timeline objects.
+
+**Preview Episode mode**
+
+Preview mode simulates the listener experience. When playback crosses an unplayed marker, the episode pauses, the selected ad plays, and then the episode resumes. Each marker auto-plays only once per preview session.
+
+## Backend/API
+
+The app uses Next.js API routes and a local JSON file.
+
+Marker endpoints:
 
 - `GET /api/markers`
 - `POST /api/markers`
 - `PUT /api/markers/:id`
 - `DELETE /api/markers/:id`
+
+Ad endpoints:
+
 - `GET /api/ads`
 - `POST /api/ads`
 
-## Notes
+Upload/export/transcript routes also exist:
 
-Uploaded episode/ad videos are stored under `public/uploads`. Marker and ad metadata is stored in `data/vidpod-db.json`. For production, media should move to object storage such as Cloudflare R2 or S3 and be streamed through signed URLs or a CDN.
+- `POST /api/uploads`
+- `POST /api/export`
+- `POST /api/transcript`
 
-## Bonus Architecture Notes
+The local database lives at:
 
-- Real waveforms: generate waveform peaks with `ffmpeg`/`audiowaveform` after upload and store peak JSON beside the asset.
-- Final MP4 export: enqueue a durable FFmpeg job that stitches the main media and selected ads using concat/filter graphs.
-- HLS output: generate multi-bitrate HLS renditions with FFmpeg and use interstitial metadata such as `EXT-X-DATERANGE` for ad markers.
-- Transcript UI: extract audio, transcribe with Whisper or a speech-to-text provider, store timestamped segments, and render a clickable transcript panel tied to the same seek event used by the timeline.
-- Hosting: deploy the Next.js app on Fly.io/Railway/Render for the Node runtime, use R2/S3 for media, CDN delivery for HLS, and a queue worker for export/transcription pipelines.
-- Reliability: use a durable queue with retry/backoff, idempotent job IDs, persisted job state, and resumable artifact writes.
+```text
+data/vidpod-db.json
+```
+
+Uploaded media is stored under:
+
+```text
+public/uploads
+```
+
+## Export Notes
+
+The MP4 and HLS export routes are wired up, but they require local `ffmpeg` and `ffprobe` to be installed and available on PATH.
+
+MP4 export creates a stitched video file under:
+
+```text
+public/exports
+```
+
+HLS export creates a streaming playlist and segments under:
+
+```text
+public/hls
+```
+
+HLS is not one downloadable video file. It is a playlist plus segment files.
+
+## Tech Stack
+
+- Next.js 14 App Router
+- React
+- TypeScript
+- Tailwind CSS
+- Zustand for client state
+- Local JSON persistence for the demo backend
+- HTML5 video playback
+
+## Running Locally
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the dev server:
+
+```bash
+npm run dev
+```
+
+Then open:
+
+```text
+http://localhost:3000
+```
+
+## Practical Limitations
+
+This is a local demo app, not a production ad server.
+
+Current limitations:
+
+- Media is stored locally in `public/uploads`.
+- A/B stats are simple marker-level stats, not a full analytics pipeline.
+- MP4/HLS export depends on local FFmpeg tools.
+- HLS playback/download UX is basic.
+- There is no authentication or multi-user workspace model.
+- Sidebar navigation is visual only and does not need to route anywhere.
+
+For production, media should move to object storage such as S3 or Cloudflare R2, exports should run in a background worker, and stats should be stored in a real database with event tracking.
